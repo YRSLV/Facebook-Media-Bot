@@ -85,6 +85,31 @@ class FBM_bot
     $response = ['recipient' => ['id' => $senderId], 'message' => ['text' => $answer], 'access_token' => $this->accessToken];
    }
 
+   elseif ($messageText == '#about') {
+    $answer = [
+      "attachment" => [
+        "type" => "template",
+        "payload" => [
+          "template_type" => "generic",
+          "elements" => [[
+            "title" => "About this project",
+            "item_url" => "https://github.com/YRSLV/Facebook-Media-Bot",
+            "image_url" => "http://www.freepngimg.com/download/github/1-2-github-free-png-image.png",
+            "subtitle" => "Learn more",
+            "buttons" => [[
+              "type" => "web_url",
+              "url" => "https://github.com/YRSLV/Facebook-Media-Bot",
+              "title" => "View Website"]
+            ]
+          ]]
+        ]]];
+    $response = [
+      'recipient' => ['id' => $senderId],
+      'message' => $answer,
+      'access_token' => $this->accessToken
+    ];
+  }
+
     $response = $client->post($url, ['query' => $response, 'headers' => $header]);
 
   return true;
