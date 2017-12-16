@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
+require 'weather_forecast.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -51,12 +52,19 @@ class FBM_bot
    $loctitle = $input['entry'][0]['messaging'][0]['message']['attachments'][0]['title'];
    if (!empty($postback)) {
     $payloads = $input['entry'][0]['messaging'][0]['postback']['payload'];
-    return ['senderid' => $senderId, 'message' => $payloads];
+    return [
+      'senderid' => $senderId,
+      'message' => $payloads
+    ];
    }
 
    if (!empty($loctitle)) {
     $payloads = $input['entry'][0]['messaging'][0]['postback']['payload'];
-    return ['senderid' => $senderId, 'message' => $messageText, 'location' => $loctitle];
+    return [
+      'senderid' => $senderId,
+      'message' => $messageText,
+      'location' => $loctitle
+    ];
    }
 
    return ['senderid' => $senderId, 'message' => $messageText];
@@ -82,7 +90,11 @@ class FBM_bot
 
    if (in_array('hi', $msgarray)) {
     $answer = "Oh hello there!";
-    $response = ['recipient' => ['id' => $senderId], 'message' => ['text' => $answer], 'access_token' => $this->accessToken];
+    $response = [
+      'recipient' => ['id' => $senderId],
+      'message' => ['text' => $answer],
+      'access_token' => $this->accessToken
+    ];
    }
 
    elseif ($messageText == '#about') {
@@ -109,6 +121,17 @@ class FBM_bot
       'access_token' => $this->accessToken
     ];
   }
+
+  elseif (in_array('#weather', $msgarray)) {
+      $forecast = new weather_wrapper(trim($msgarray[1] . " " . $msgarray[2] . " " . $msgarray[3]));
+      $result = $forecast->get_forecast();
+      $answer = implode("\r\n",$result);
+
+      $response = [
+        'recipient' => ['id' => $senderId],
+        'message' => ['text' => $answer],
+        'access_token' => $this->accessToken
+      ];
 
     $response = $client->post($url, ['query' => $response, 'headers' => $header]);
 
