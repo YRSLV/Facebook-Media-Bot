@@ -1,6 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 require 'weather_forecast.php';
+require 'news_fetcher.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -132,6 +133,85 @@ class FBM_bot
         'message' => ['text' => $answer],
         'access_token' => $this->accessToken
       ];
+
+  }
+
+  elseif (in_array('#news', $msgarray)) {
+    $news = new news_wrapper();
+    $feed = $news->get_newsfeed();
+    if (!empty($feed[0]['title'])) {
+
+      $answer = ["attachment" =>[
+        "type" => "template",
+        "payload" =>
+          [
+            "template_type" => "list",
+            "elements" =>
+            [
+              [
+              "title" => $feed[0]['title'],
+              "item_url" => $feed[0]['link'],
+              "image_url" => $feed[0]['image'],
+              "subtitle" => "",
+              "buttons" =>
+              [
+                [
+                  "type" => "web_url",
+                  "url" => $feed[0]['link'],
+                  "title" => "Learn More"
+                ],
+             ]
+             ],
+           [
+             "title" => $feed[1]['title'],
+             "item_url" => $feed[1]['link'],
+             "image_url" => $feed[1]['image'],
+             "subtitle" => "",
+             "buttons" =>
+             [
+               [
+                 "type" => "web_url",
+                 "url" => $feed[1]['link'],
+                 "title" => "Learn More"
+               ],
+             ]
+         ],
+         [
+           "title" => $feed[2]['title'],
+           "item_url" => $feed[2]['link'],
+           "image_url" => $feed[2]['image'],
+           "subtitle" => "",
+           "buttons" =>
+               [
+                 [
+                   "type" => "web_url",
+                   "url" => $feed[2]['link'],
+                   "title" => "Learn More"
+                 ],
+               ]
+             ]
+           ]
+         ]
+        ]
+      ];
+
+      $response = [
+       'recipient' => ['id' => $senderId],
+       'message' => $answer,
+       'access_token' => $this->accessToken
+       ];
+
+      }
+      else {
+        $answer = "An error has happened, please try again later!";
+        $response = [
+          'recipient' => ['id' => $senderId],
+          'message' => ['text' => $answer],
+          'access_token' => $this->accessToken
+        ];
+      }
+
+}
 
     $response = $client->post($url, ['query' => $response, 'headers' => $header]);
 
