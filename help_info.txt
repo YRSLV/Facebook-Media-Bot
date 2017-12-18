@@ -1,0 +1,6 @@
+*List of all available commands:*
+*hi* - returns a greeting
+*#weather* *City_name* - returns current weather conditions for *City_name*
+*#news* - returns the latest news
+*#about* - returns info about the project
+*#help* - returns a list of available commands

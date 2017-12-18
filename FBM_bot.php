@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 require 'weather_forecast.php';
 require 'news_fetcher.php';
+require 'help_callback.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -90,7 +91,7 @@ class FBM_bot
    );
 
    if (in_array('hi', $msgarray)) {
-    $answer = "Oh hello there!";
+    $answer = "Oh hello there!\r\nTo see the list of available commands please consider typing #help";
     $response = [
       'recipient' => ['id' => $senderId],
       'message' => ['text' => $answer],
@@ -212,6 +213,16 @@ class FBM_bot
       }
 
 }
+
+  elseif (in_array('#help', $msgarray)) {
+    $helper = new help_wrapper("./help_info.txt");
+    $answer = $helper->get_help();
+    $response = [
+      'recipient' => ['id' => $senderId],
+      'message' => ['text' => $answer],
+      'access_token' => $this->accessToken
+    ];
+  }
 
     $response = $client->post($url, ['query' => $response, 'headers' => $header]);
 
