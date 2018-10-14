@@ -1,5 +1,7 @@
 # Facebook Media Bot
 
+![Facebook Media Bot](https://github.com/YRSLV/Facebook-Media-Bot/blob/master/img/FBM_portfolio.jpg)
+
 This project is a demonstration of chatbot, written in PHP for Facebook Messenger Platform
 
 ## Built With
